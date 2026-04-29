@@ -3,9 +3,24 @@ import { useState } from "react";
 import ResumeForm from "@/components/ResumeForm";
 import ResumePreview from "@/components/ResumePreview";
 
+interface Analysis {
+  role_title?: string;
+  company_type?: string;
+  required_keywords?: string[];
+  nice_to_have?: string[];
+  matched_keywords?: string[];
+  missing_keywords?: string[];
+  match_score?: number;
+  match_label?: string;
+  key_gaps?: string[];
+  strengths?: string[];
+  job_search_terms?: string;
+}
+
 export default function Home() {
   const [resume, setResume] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
 
   return (
     <main className="min-h-screen bg-[#0a0a0f] text-white">
@@ -23,6 +38,7 @@ export default function Home() {
             <span className="font-semibold text-lg tracking-tight">ResumeAI</span>
           </div>
           <div className="flex items-center gap-4">
+            <a href="#how" className="text-sm text-white/60 hover:text-white transition-colors">How it works</a>
             <a href="#pricing" className="text-sm text-white/60 hover:text-white transition-colors">Pricing</a>
             <button className="text-sm px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 transition-all font-medium">
               Sign up free
@@ -32,34 +48,33 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <section className="max-w-7xl mx-auto px-6 pt-24 pb-16 text-center">
+      <section className="max-w-7xl mx-auto px-6 pt-20 pb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-medium mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
-          Powered by Claude AI
+          Powered by Claude AI · ATS-optimised · Job match score
         </div>
-        <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
-          Your resume,{" "}
+        <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-5">
+          Paste job spec.{" "}
           <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-            tailored by AI
+            Get hired.
           </span>
         </h1>
-        <p className="text-lg text-white/50 max-w-2xl mx-auto mb-10">
-          Paste a job description. Get a perfectly tailored resume in seconds. Beat ATS filters and land more interviews.
+        <p className="text-lg text-white/50 max-w-2xl mx-auto mb-6">
+          AI analyses the job description, scores your profile match, highlights gaps, then crafts a keyword-optimised resume — plus finds similar job openings for you.
         </p>
-        <div className="flex items-center justify-center gap-4">
-          <button className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 hover:from-violet-500 hover:to-cyan-500 font-semibold transition-all shadow-lg shadow-violet-500/25 text-sm">
-            Build my resume — free
-          </button>
-          <button className="px-8 py-3.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-sm font-medium transition-all">
-            See example
-          </button>
+        {/* How it works pills */}
+        <div className="flex items-center justify-center gap-3 flex-wrap text-xs text-white/40 mb-10">
+          {["1. Paste job spec", "→", "2. Check match score", "→", "3. Generate resume", "→", "4. Find more jobs"].map((s, i) => (
+            s === "→" ? <span key={i} className="text-white/20">{s}</span>
+              : <span key={i} className="px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03]">{s}</span>
+          ))}
         </div>
       </section>
 
       {/* Main builder */}
-      <section className="max-w-7xl mx-auto px-6 pb-24 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <ResumeForm onGenerate={setResume} setLoading={setLoading} />
-        <ResumePreview resume={resume} loading={loading} />
+      <section id="how" className="max-w-7xl mx-auto px-6 pb-24 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <ResumeForm onGenerate={setResume} setLoading={setLoading} onAnalysis={setAnalysis} />
+        <ResumePreview resume={resume} loading={loading} analysis={analysis} />
       </section>
 
       {/* Pricing */}
@@ -67,8 +82,8 @@ export default function Home() {
         <h2 className="text-3xl font-bold text-center mb-12">Simple pricing</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
-            { name: "Free", price: "$0", features: ["3 resumes/month", "AI tailoring", "PDF export", "Basic templates"], cta: "Get started" },
-            { name: "Pro", price: "$15", features: ["Unlimited resumes", "All templates", "Cover letter AI", "ATS score checker", "Priority support"], cta: "Start free trial", highlight: true },
+            { name: "Free", price: "$0", features: ["3 resumes/month", "Job match score", "ATS keyword analysis", "LinkedIn job search", "Download PDF/DOCX/MD"], cta: "Get started" },
+            { name: "Pro", price: "$15", features: ["Unlimited resumes", "Cover letter AI", "ATS score checker", "Job alerts by email", "All export formats", "Priority support"], cta: "Start free trial", highlight: true },
           ].map((plan) => (
             <div key={plan.name} className={`p-8 rounded-2xl border ${plan.highlight ? "border-violet-500/50 bg-violet-500/10" : "border-white/10 bg-white/[0.03]"}`}>
               <div className="text-sm text-white/50 mb-1">{plan.name}</div>
