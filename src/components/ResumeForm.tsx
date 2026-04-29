@@ -40,10 +40,12 @@ export default function ResumeForm({ onGenerate, setLoading, onAnalysis, onCover
   const [analyzing, setAnalyzing] = useState(false);
   const [generatingCL, setGeneratingCL] = useState(false);
   const [generatingPrep, setGeneratingPrep] = useState(false);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   async function handleAnalyze() {
     if (!jobDesc || !experience) return;
     setAnalyzing(true);
+    setApiError(null);
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
@@ -51,10 +53,10 @@ export default function ResumeForm({ onGenerate, setLoading, onAnalysis, onCover
         body: JSON.stringify({ jobDesc, experience, skills, mode: "analyze" }),
       });
       const data = await res.json();
+      if (!res.ok || data.error) { setApiError(data.error || 'Analysis failed'); return; }
       onAnalysis(data.analysis || {});
-    } finally {
-      setAnalyzing(false);
-    }
+    } catch { setApiError('Network error. Please try again.'); }
+    finally { setAnalyzing(false); }
   }
 
   async function handleCoverLetter() {
@@ -223,7 +225,11 @@ export default function ResumeForm({ onGenerate, setLoading, onAnalysis, onCover
             </div>
           </div>
         </div>
-      </form>
+      {apiError && (
+        <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+          <p className="text-red-300 text-sm">⚠️ {apiError}</p>
+        </div>
+      )}
     </div>
   );
 }
