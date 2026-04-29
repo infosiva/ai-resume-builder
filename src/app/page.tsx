@@ -17,10 +17,20 @@ interface Analysis {
   job_search_terms?: string;
 }
 
+interface InterviewPrep {
+  role_title?: string;
+  questions?: { question: string; category: string; why_asked: string; answer_framework: string; sample_answer_start: string }[];
+  red_flags_to_avoid?: string[];
+  questions_to_ask_them?: string[];
+  salary_range_hint?: string;
+}
+
 export default function Home() {
   const [resume, setResume] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [coverLetter, setCoverLetter] = useState<string | null>(null);
+  const [interviewPrep, setInterviewPrep] = useState<InterviewPrep | null>(null);
 
   return (
     <main className="min-h-screen bg-[#0a0a0f] text-white">
@@ -51,7 +61,7 @@ export default function Home() {
       <section className="max-w-7xl mx-auto px-6 pt-20 pb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 text-violet-300 text-xs font-medium mb-6">
           <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
-          Powered by Claude AI · ATS-optimised · Job match score
+          Powered by Claude AI · ATS-optimised · Job match score · Interview prep
         </div>
         <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-5">
           Paste job spec.{" "}
@@ -60,11 +70,11 @@ export default function Home() {
           </span>
         </h1>
         <p className="text-lg text-white/50 max-w-2xl mx-auto mb-6">
-          AI analyses the job description, scores your profile match, highlights gaps, then crafts a keyword-optimised resume — plus finds similar job openings for you.
+          AI analyses the job description, scores your profile match, then crafts a keyword-optimised resume, cover letter, and interview prep — all in one go.
         </p>
         {/* How it works pills */}
         <div className="flex items-center justify-center gap-3 flex-wrap text-xs text-white/40 mb-10">
-          {["1. Paste job spec", "→", "2. Check match score", "→", "3. Generate resume", "→", "4. Find more jobs"].map((s, i) => (
+          {["1. Paste job spec", "→", "2. Check match score", "→", "3. Generate resume + cover letter", "→", "4. Ace the interview"].map((s, i) => (
             s === "→" ? <span key={i} className="text-white/20">{s}</span>
               : <span key={i} className="px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.03]">{s}</span>
           ))}
@@ -73,8 +83,20 @@ export default function Home() {
 
       {/* Main builder */}
       <section id="how" className="max-w-7xl mx-auto px-6 pb-24 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <ResumeForm onGenerate={setResume} setLoading={setLoading} onAnalysis={setAnalysis} />
-        <ResumePreview resume={resume} loading={loading} analysis={analysis} />
+        <ResumeForm
+          onGenerate={setResume}
+          setLoading={setLoading}
+          onAnalysis={setAnalysis}
+          onCoverLetter={setCoverLetter}
+          onInterviewPrep={setInterviewPrep}
+        />
+        <ResumePreview
+          resume={resume}
+          loading={loading}
+          analysis={analysis}
+          coverLetter={coverLetter}
+          interviewPrep={interviewPrep}
+        />
       </section>
 
       {/* Pricing */}
@@ -82,8 +104,8 @@ export default function Home() {
         <h2 className="text-3xl font-bold text-center mb-12">Simple pricing</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {[
-            { name: "Free", price: "$0", features: ["3 resumes/month", "Job match score", "ATS keyword analysis", "LinkedIn job search", "Download PDF/DOCX/MD"], cta: "Get started" },
-            { name: "Pro", price: "$15", features: ["Unlimited resumes", "Cover letter AI", "ATS score checker", "Job alerts by email", "All export formats", "Priority support"], cta: "Start free trial", highlight: true },
+            { name: "Free", price: "$0", features: ["3 resumes/month", "Job match score", "ATS keyword analysis", "Cover letter generator", "Interview prep (3 questions)", "LinkedIn job search", "Download MD/HTML/TXT"], cta: "Get started" },
+            { name: "Pro", price: "$15", features: ["Unlimited resumes + cover letters", "Full interview prep (8 questions)", "Salary range insight", "ATS score checker", "Job alerts by email", "All export formats", "Priority support"], cta: "Start free trial", highlight: true },
           ].map((plan) => (
             <div key={plan.name} className={`p-8 rounded-2xl border ${plan.highlight ? "border-violet-500/50 bg-violet-500/10" : "border-white/10 bg-white/[0.03]"}`}>
               <div className="text-sm text-white/50 mb-1">{plan.name}</div>

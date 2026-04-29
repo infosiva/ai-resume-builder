@@ -7,7 +7,6 @@ export async function POST(req: NextRequest) {
   const { jobDesc, experience, skills, name, currentTitle, mode } = await req.json();
 
   if (mode === "analyze") {
-    // Analyze job spec and profile match
     const message = await client.messages.create({
       model: "claude-sonnet-4-6",
       max_tokens: 1500,
@@ -47,6 +46,89 @@ Return this JSON:
       return NextResponse.json({ analysis: match ? JSON.parse(match[0]) : {} });
     } catch {
       return NextResponse.json({ analysis: {} });
+    }
+  }
+
+  if (mode === "cover_letter") {
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1200,
+      system: `You are an expert career coach and professional writer. Write compelling, personalised cover letters.
+Rules:
+- 3-4 paragraphs, conversational yet professional
+- Opening: grab attention — reference something specific about the role/company
+- Middle: connect 2-3 achievements directly to their requirements, use numbers where possible
+- Closing: confident call-to-action, express genuine enthusiasm
+- Do NOT use generic phrases like "I am writing to apply" or "Please find enclosed"
+- Mirror the language/tone of the job description
+- Keep under 350 words`,
+      messages: [{
+        role: "user",
+        content: `Write a tailored cover letter for:
+
+CANDIDATE NAME: ${name || "Your Name"}
+CURRENT TITLE: ${currentTitle || "Professional"}
+
+JOB DESCRIPTION:
+${jobDesc}
+
+MY EXPERIENCE:
+${experience}
+
+MY SKILLS:
+${skills}
+
+Write a concise, powerful cover letter that shows genuine fit for this specific role.`,
+      }],
+    });
+    const coverLetter = message.content[0].type === "text" ? message.content[0].text : "";
+    return NextResponse.json({ coverLetter });
+  }
+
+  if (mode === "interview_prep") {
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-6",
+      max_tokens: 2000,
+      system: "You are an expert interview coach. Return ONLY valid JSON, no markdown.",
+      messages: [{
+        role: "user",
+        content: `Based on this job description and candidate profile, generate interview prep materials.
+
+JOB DESCRIPTION:
+${jobDesc}
+
+CANDIDATE EXPERIENCE:
+${experience}
+
+CANDIDATE SKILLS:
+${skills}
+
+Return this JSON:
+{
+  "role_title": "job title",
+  "questions": [
+    {
+      "question": "Tell me about a time you...",
+      "category": "behavioural|technical|situational|culture",
+      "why_asked": "what the interviewer is assessing",
+      "answer_framework": "STAR framework hint or key points to cover",
+      "sample_answer_start": "Strong opening line for an answer"
+    }
+  ],
+  "red_flags_to_avoid": ["common mistake 1", "common mistake 2", "common mistake 3"],
+  "questions_to_ask_them": ["smart question 1", "smart question 2", "smart question 3"],
+  "salary_range_hint": "Based on role/location, typical range is..."
+}
+
+Generate 8 questions covering: 2 technical, 3 behavioural, 2 situational, 1 culture fit. Make them specific to this exact role.`,
+      }],
+    });
+    const text = message.content[0].type === "text" ? message.content[0].text : "{}";
+    try {
+      const match = text.match(/\{[\s\S]*\}/);
+      return NextResponse.json({ prep: match ? JSON.parse(match[0]) : {} });
+    } catch {
+      return NextResponse.json({ prep: {} });
     }
   }
 

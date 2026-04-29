@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 interface Analysis {
   role_title?: string;
@@ -15,10 +15,28 @@ interface Analysis {
   job_search_terms?: string;
 }
 
+interface InterviewQuestion {
+  question: string;
+  category: string;
+  why_asked: string;
+  answer_framework: string;
+  sample_answer_start: string;
+}
+
+interface InterviewPrep {
+  role_title?: string;
+  questions?: InterviewQuestion[];
+  red_flags_to_avoid?: string[];
+  questions_to_ask_them?: string[];
+  salary_range_hint?: string;
+}
+
 interface Props {
   resume: string | null;
   loading: boolean;
   analysis: Analysis | null;
+  coverLetter: string | null;
+  interviewPrep: InterviewPrep | null;
 }
 
 function MatchGauge({ score }: { score: number }) {
@@ -39,7 +57,21 @@ function MatchGauge({ score }: { score: number }) {
   );
 }
 
-// Convert markdown to simple HTML for display + download
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const copy = useCallback(async () => {
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [text]);
+  return (
+    <button onClick={copy}
+      className={`px-3 py-2 rounded-lg border text-xs font-medium transition-all ${copied ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300' : 'border-white/10 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white'}`}>
+      {copied ? '✓ Copied' : '📋 Copy'}
+    </button>
+  );
+}
+
 function mdToHtml(md: string): string {
   return md
     .replace(/^# (.+)$/gm, '<h1 style="font-size:1.5rem;font-weight:700;margin:1rem 0 0.5rem">$1</h1>')
@@ -51,14 +83,100 @@ function mdToHtml(md: string): string {
     .replace(/\n/g, '');
 }
 
-export default function ResumePreview({ resume, loading, analysis }: Props) {
+const CATEGORY_COLORS: Record<string, string> = {
+  behavioural: 'bg-violet-500/15 border-violet-500/30 text-violet-300',
+  technical: 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300',
+  situational: 'bg-amber-500/15 border-amber-500/30 text-amber-300',
+  culture: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300',
+};
+
+function InterviewPrepPanel({ prep }: { prep: InterviewPrep }) {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+
+  return (
+    <div className="space-y-5">
+      {prep.salary_range_hint && (
+        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/8 px-4 py-3">
+          <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">Salary insight</div>
+          <p className="text-sm text-emerald-300">{prep.salary_range_hint}</p>
+        </div>
+      )}
+
+      {(prep.questions || []).length > 0 && (
+        <div>
+          <div className="text-xs font-semibold text-white/70 mb-3">Likely interview questions</div>
+          <div className="space-y-2">
+            {prep.questions!.map((q, i) => (
+              <div key={i} className="rounded-xl border border-white/8 bg-white/[0.025] overflow-hidden">
+                <button
+                  onClick={() => setOpenIdx(openIdx === i ? null : i)}
+                  className="w-full px-4 py-3 flex items-start gap-3 text-left hover:bg-white/[0.03] transition-colors">
+                  <span className={`mt-0.5 text-[10px] px-1.5 py-0.5 rounded border flex-shrink-0 ${CATEGORY_COLORS[q.category] || 'bg-white/10 border-white/20 text-white/50'}`}>
+                    {q.category}
+                  </span>
+                  <span className="text-sm text-white/80 leading-snug">{q.question}</span>
+                  <span className="ml-auto text-white/30 flex-shrink-0 text-xs mt-0.5">{openIdx === i ? '▲' : '▼'}</span>
+                </button>
+                {openIdx === i && (
+                  <div className="px-4 pb-4 space-y-2.5 border-t border-white/5">
+                    <div>
+                      <div className="text-[10px] text-white/40 mt-3 mb-1 uppercase tracking-wider">Why they ask this</div>
+                      <p className="text-xs text-white/60">{q.why_asked}</p>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-white/40 mb-1 uppercase tracking-wider">How to answer</div>
+                      <p className="text-xs text-white/60">{q.answer_framework}</p>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-white/40 mb-1 uppercase tracking-wider">Strong opening</div>
+                      <p className="text-xs text-cyan-300 italic">"{q.sample_answer_start}"</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(prep.questions_to_ask_them || []).length > 0 && (
+        <div>
+          <div className="text-xs font-semibold text-white/70 mb-2">Questions to ask them</div>
+          <div className="space-y-1.5">
+            {prep.questions_to_ask_them!.map((q, i) => (
+              <div key={i} className="flex items-start gap-2 text-xs text-white/60">
+                <span className="text-emerald-400 mt-0.5 flex-shrink-0">?</span>{q}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(prep.red_flags_to_avoid || []).length > 0 && (
+        <div className="rounded-xl border border-red-500/15 bg-red-500/5 p-4">
+          <div className="text-[10px] text-white/40 mb-2 uppercase tracking-wider">Avoid these mistakes</div>
+          <div className="space-y-1.5">
+            {prep.red_flags_to_avoid!.map((f, i) => (
+              <div key={i} className="flex items-start gap-2 text-xs text-red-300/70">
+                <span className="text-red-400 flex-shrink-0">✕</span>{f}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function ResumePreview({ resume, loading, analysis, coverLetter, interviewPrep }: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'resume' | 'cover' | 'prep'>('resume');
 
   function downloadAs(format: 'md' | 'html' | 'txt') {
     if (!resume) return;
     let content = resume;
     let mime = 'text/plain';
-    let ext = format;
+    const ext = format;
 
     if (format === 'html') {
       content = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Resume</title>
@@ -98,6 +216,12 @@ h1{color:#111}h2{color:#333;border-bottom:1px solid #ddd}li{margin:0.2rem 0}
     { label: '🌐 Google Jobs', url: `https://www.google.com/search?q=${encodeURIComponent(searchTerms + ' jobs')}` },
     { label: '🏢 Glassdoor', url: `https://www.glassdoor.com/Search/results.htm?keyword=${encodeURIComponent(searchTerms)}` },
   ] : [];
+
+  const tabs = [
+    { id: 'resume' as const, label: 'Resume', dot: !!resume },
+    { id: 'cover' as const, label: 'Cover Letter', dot: !!coverLetter },
+    { id: 'prep' as const, label: 'Interview Prep', dot: !!interviewPrep?.questions?.length },
+  ];
 
   return (
     <div className="space-y-4">
@@ -169,61 +293,135 @@ h1{color:#111}h2{color:#333;border-bottom:1px solid #ddd}li{margin:0.2rem 0}
                   </a>
                 ))}
               </div>
-              <p className="text-[10px] text-white/30 mt-2 text-center">Click a link to search for jobs matching your profile</p>
             </div>
           )}
         </div>
       )}
 
-      {/* Resume preview */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-8 flex flex-col">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-xl font-semibold mb-1">Tailored Resume</h2>
-            <p className="text-sm text-white/40">ATS-optimised · Keywords matched</p>
-          </div>
-          {resume && (
-            <div className="relative">
-              <div className="flex gap-2">
-                <button onClick={printResume}
-                  className="px-3 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-medium transition-all">
-                  🖨️ Print / PDF
-                </button>
-                <button onClick={() => setDownloadOpen(o => !o)}
-                  className="px-3 py-2 rounded-lg border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 text-xs font-medium transition-all flex items-center gap-1">
-                  ↓ Download ▾
-                </button>
-              </div>
-              {downloadOpen && (
-                <div className="absolute right-0 top-10 w-40 rounded-xl border border-white/10 bg-[#0f0f1a] shadow-xl z-50 overflow-hidden">
-                  {([['md', '📝 Markdown'], ['html', '🌐 HTML'], ['txt', '📄 Plain Text']] as const).map(([fmt, label]) => (
-                    <button key={fmt} onClick={() => downloadAs(fmt)}
-                      className="w-full px-4 py-2.5 text-left text-sm text-white/70 hover:bg-white/[0.06] hover:text-white transition-all flex items-center gap-2">
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+      {/* Tab bar + content */}
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl flex flex-col">
+        {/* Tabs */}
+        <div className="flex border-b border-white/8 px-2 pt-2">
+          {tabs.map(tab => (
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+              className={`relative px-4 py-2.5 text-sm font-medium rounded-t-lg transition-all flex items-center gap-1.5 ${
+                activeTab === tab.id
+                  ? 'text-white bg-white/[0.06] border-b-2 border-violet-400'
+                  : 'text-white/40 hover:text-white/70'
+              }`}>
+              {tab.label}
+              {tab.dot && <span className="w-1.5 h-1.5 rounded-full bg-violet-400" />}
+            </button>
+          ))}
         </div>
 
-        <div className="flex-1 rounded-xl border border-white/5 bg-black/30 p-6 min-h-[400px] overflow-y-auto">
-          {loading ? (
-            <div className="flex flex-col items-center justify-center h-full gap-4">
-              <div className="w-10 h-10 rounded-full border-2 border-violet-500 border-t-transparent animate-spin" />
-              <p className="text-sm text-white/40">Tailoring your resume...</p>
-              <p className="text-xs text-white/25">Matching keywords · ATS optimising · Highlighting your best experience</p>
-            </div>
-          ) : resume ? (
-            <pre className="text-sm text-white/80 whitespace-pre-wrap font-mono leading-relaxed">{resume}</pre>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
-              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-3xl">✦</div>
-              <p className="text-white/40 text-sm max-w-xs">
-                Click <strong className="text-white/60">⚡ Check job match</strong> first to see your score, then generate your tailored resume
-              </p>
-            </div>
+        <div className="p-6 flex-1 flex flex-col">
+          {/* Resume tab */}
+          {activeTab === 'resume' && (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-semibold mb-0.5">Tailored Resume</h2>
+                  <p className="text-xs text-white/40">ATS-optimised · Keywords matched</p>
+                </div>
+                {resume && (
+                  <div className="relative">
+                    <div className="flex gap-2">
+                      <button onClick={printResume}
+                        className="px-3 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-xs font-medium transition-all">
+                        🖨️ Print / PDF
+                      </button>
+                      <button onClick={() => setDownloadOpen(o => !o)}
+                        className="px-3 py-2 rounded-lg border border-violet-500/30 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 text-xs font-medium transition-all flex items-center gap-1">
+                        ↓ Download ▾
+                      </button>
+                    </div>
+                    {downloadOpen && (
+                      <div className="absolute right-0 top-10 w-40 rounded-xl border border-white/10 bg-[#0f0f1a] shadow-xl z-50 overflow-hidden">
+                        {([['md', '📝 Markdown'], ['html', '🌐 HTML'], ['txt', '📄 Plain Text']] as const).map(([fmt, label]) => (
+                          <button key={fmt} onClick={() => downloadAs(fmt)}
+                            className="w-full px-4 py-2.5 text-left text-sm text-white/70 hover:bg-white/[0.06] hover:text-white transition-all flex items-center gap-2">
+                            {label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="rounded-xl border border-white/5 bg-black/30 p-6 min-h-[350px] overflow-y-auto flex-1">
+                {loading ? (
+                  <div className="flex flex-col items-center justify-center h-full gap-4">
+                    <div className="w-10 h-10 rounded-full border-2 border-violet-500 border-t-transparent animate-spin" />
+                    <p className="text-sm text-white/40">Tailoring your resume...</p>
+                    <p className="text-xs text-white/25">Matching keywords · ATS optimising · Highlighting your best experience</p>
+                  </div>
+                ) : resume ? (
+                  <pre className="text-sm text-white/80 whitespace-pre-wrap font-mono leading-relaxed">{resume}</pre>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-3xl">✦</div>
+                    <p className="text-white/40 text-sm max-w-xs">
+                      Click <strong className="text-white/60">⚡ Check job match</strong> first, then generate your tailored resume
+                    </p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Cover Letter tab */}
+          {activeTab === 'cover' && (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-semibold mb-0.5">Cover Letter</h2>
+                  <p className="text-xs text-white/40">Personalised · Avoids clichés · Under 350 words</p>
+                </div>
+                {coverLetter && <CopyButton text={coverLetter} />}
+              </div>
+              <div className="rounded-xl border border-white/5 bg-black/30 p-6 min-h-[350px] overflow-y-auto flex-1">
+                {coverLetter ? (
+                  <pre className="text-sm text-white/80 whitespace-pre-wrap font-mono leading-relaxed">{coverLetter}</pre>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-3xl">✉️</div>
+                    <p className="text-white/40 text-sm max-w-xs">
+                      Click <strong className="text-white/60">✉️ Cover letter</strong> on the left to generate a personalised cover letter
+                    </p>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+
+          {/* Interview Prep tab */}
+          {activeTab === 'prep' && (
+            <>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-semibold mb-0.5">Interview Prep</h2>
+                  <p className="text-xs text-white/40">Questions they'll ask · How to answer · What to ask them</p>
+                </div>
+                {interviewPrep?.role_title && (
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-violet-500/15 border border-violet-500/30 text-violet-300">
+                    {interviewPrep.role_title}
+                  </span>
+                )}
+              </div>
+              <div className="overflow-y-auto flex-1 min-h-[350px]">
+                {interviewPrep?.questions?.length ? (
+                  <InterviewPrepPanel prep={interviewPrep} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
+                    <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-3xl">🎯</div>
+                    <p className="text-white/40 text-sm max-w-xs">
+                      Click <strong className="text-white/60">🎯 Interview prep</strong> on the left to get likely questions and how to answer them
+                    </p>
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>
