@@ -1,20 +1,27 @@
 @import "tailwindcss";
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: #fafaf9; color: #1c1917; font-family: 'Georgia', serif; }
 
-* {
-  box-sizing: border-box;
+/* Subtle dot grid */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(#d6d3d1 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+.editorial-card { background: white; border: 1px solid #e7e5e4; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.editorial-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+.sans { font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif; }
+.accent { color: #c2410c; }
+.accent-bg { background: #c2410c; }
+.ruled { border-bottom: 2px solid #1c1917; }
 
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
-  border-radius: 3px;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #fafaf9; }
+::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 3px; }
