@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>{children}<script src="/t.js" data-site="ai-resume-builder-olive-omega.vercel.app" defer></script></body>
     </html>
   );
 }
