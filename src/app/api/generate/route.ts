@@ -1,9 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
 export async function POST(req: NextRequest) {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return NextResponse.json({ error: 'API not configured. Please set ANTHROPIC_API_KEY.' }, { status: 500 })
+  }
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const { jobDesc, experience, skills, name, currentTitle, mode } = await req.json();
 
   if (mode === "analyze") {
