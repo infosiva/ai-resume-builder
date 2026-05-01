@@ -1,5 +1,23 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
+
+function useRateLimit(key: string, limit: number) {
+  const getUsage = useCallback(() => {
+    if (typeof window === 'undefined') return { count: 0, date: '' }
+    try { return JSON.parse(localStorage.getItem(key) || '{"count":0,"date":""}') } catch { return { count: 0, date: '' } }
+  }, [key])
+  const today = new Date().toISOString().split('T')[0]
+  const usage = getUsage()
+  const count = usage.date === today ? usage.count : 0
+  const remaining = Math.max(0, limit - count)
+  const increment = useCallback(() => {
+    const d = new Date().toISOString().split('T')[0]
+    const u = getUsage()
+    const c = u.date === d ? u.count + 1 : 1
+    localStorage.setItem(key, JSON.stringify({ count: c, date: d }))
+  }, [key, getUsage])
+  return { remaining, increment, isLimited: remaining === 0 }
+}
 
 interface Analysis {
   role_title?: string;
@@ -32,6 +50,7 @@ interface InterviewPrep {
 }
 
 export default function ResumeForm({ onGenerate, setLoading, onAnalysis, onCoverLetter, onInterviewPrep }: Props) {
+  const { remaining, increment, isLimited } = useRateLimit('resumeai-usage', 3)
   const [jobDesc, setJobDesc] = useState("");
   const [experience, setExperience] = useState("");
   const [skills, setSkills] = useState("");
@@ -43,7 +62,8 @@ export default function ResumeForm({ onGenerate, setLoading, onAnalysis, onCover
   const [apiError, setApiError] = useState<string | null>(null);
 
   async function handleAnalyze() {
-    if (!jobDesc || !experience) return;
+    if (!jobDesc || !experience || isLimited) return;
+    increment();
     setAnalyzing(true);
     setApiError(null);
     try {
@@ -169,19 +189,29 @@ export default function ResumeForm({ onGenerate, setLoading, onAnalysis, onCover
 
         {/* Step 1: Analyze */}
         <div>
-          <div className="text-[10px] text-white/30 uppercase tracking-wider mb-2">Step 1 · Check your match</div>
-          <button
-            type="button"
-            onClick={handleAnalyze}
-            disabled={!hasInput || analyzing}
-            className="w-full py-3 rounded-xl border border-violet-500/40 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 font-medium text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2"
-          >
-            {analyzing ? (
-              <><div className="w-4 h-4 border-2 border-violet-400/30 border-t-violet-400 rounded-full animate-spin" /> Analysing match...</>
-            ) : (
-              <><span>⚡</span> Check job match score</>
-            )}
-          </button>
+          <div className="text-[10px] text-white/30 uppercase tracking-wider mb-2 flex justify-between">
+            <span>Step 1 · Check your match</span>
+            {!isLimited && <span className="text-violet-400/50">{remaining} uses left today</span>}
+          </div>
+          {isLimited ? (
+            <div className="w-full py-3 rounded-xl border border-orange-500/30 bg-orange-500/10 text-center">
+              <p className="text-orange-300 text-sm font-semibold">Daily limit reached (3 free / day)</p>
+              <a href="#pricing" className="text-xs text-orange-500/70 hover:text-orange-400 underline">Upgrade to Pro for unlimited →</a>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAnalyze}
+              disabled={!hasInput || analyzing}
+              className="w-full py-3 rounded-xl border border-violet-500/40 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 font-medium text-sm transition-all disabled:opacity-40 flex items-center justify-center gap-2"
+            >
+              {analyzing ? (
+                <><div className="w-4 h-4 border-2 border-violet-400/30 border-t-violet-400 rounded-full animate-spin" /> Analysing match...</>
+              ) : (
+                <><span>⚡</span> Check job match score</>
+              )}
+            </button>
+          )}
         </div>
 
         {/* Step 2: Generate assets */}
