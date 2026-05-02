@@ -255,6 +255,7 @@ export default function ResumeForm({ onGenerate, setLoading, onAnalysis, onCover
             </div>
           </div>
         </div>
+      </form>
       {apiError && (
         <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
           <p className="text-red-300 text-sm">⚠️ {apiError}</p>
