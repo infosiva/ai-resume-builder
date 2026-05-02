@@ -31,6 +31,7 @@ export default function Home() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [coverLetter, setCoverLetter] = useState<string | null>(null);
   const [interviewPrep, setInterviewPrep] = useState<InterviewPrep | null>(null);
+  const [activePreviewTab, setActivePreviewTab] = useState<'resume' | 'cover' | 'prep'>('resume');
 
   return (
     <main className="min-h-screen relative z-10">
@@ -46,9 +47,9 @@ export default function Home() {
             <div className="flex items-center gap-6 sans">
               <a href="#how" className="text-sm text-stone-500 hover:text-stone-900 transition-colors hidden sm:block">How it works</a>
               <a href="#pricing" className="text-sm text-stone-500 hover:text-stone-900 transition-colors hidden sm:block">Pricing</a>
-              <button className="text-sm px-4 py-2 bg-stone-900 text-white hover:bg-orange-700 transition-all font-semibold rounded">
+              <a href="#how" className="text-sm px-4 py-2 bg-stone-900 text-white hover:bg-orange-700 transition-all font-semibold rounded">
                 Try free →
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -110,11 +111,11 @@ export default function Home() {
         {/* Override ResumeForm dark styles with light overrides */}
         <div className="[&_h2]:text-stone-900 [&_h2]:sans [&_p]:text-stone-500 [&_p]:sans [&_label]:text-stone-500 [&_label]:sans [&_textarea]:bg-white [&_textarea]:border-stone-200 [&_textarea]:text-stone-900 [&_textarea]:placeholder-stone-300 [&_textarea]:focus:border-orange-500 [&_input]:bg-white [&_input]:border-stone-200 [&_input]:text-stone-900 [&_input]:placeholder-stone-300 [&_input]:focus:border-orange-500 [&_.rounded-2xl]:bg-white [&_.rounded-2xl]:border-stone-200 [&_.rounded-2xl]:shadow-sm">
           <ResumeForm
-            onGenerate={setResume}
+            onGenerate={(r) => { setResume(r); setActivePreviewTab('resume'); }}
             setLoading={setLoading}
             onAnalysis={setAnalysis}
-            onCoverLetter={setCoverLetter}
-            onInterviewPrep={setInterviewPrep}
+            onCoverLetter={(cl) => { setCoverLetter(cl); setActivePreviewTab('cover'); }}
+            onInterviewPrep={(p) => { setInterviewPrep(p); setActivePreviewTab('prep'); }}
           />
         </div>
         <div className="[&_h2]:text-stone-900 [&_h2]:sans [&_p]:text-stone-500">
@@ -124,6 +125,8 @@ export default function Home() {
             analysis={analysis}
             coverLetter={coverLetter}
             interviewPrep={interviewPrep}
+            activeTab={activePreviewTab}
+            onTabChange={setActivePreviewTab}
           />
         </div>
       </section>
@@ -163,8 +166,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t-2 border-stone-900 bg-white sans">
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between text-xs text-stone-400">
-          <span className="font-black text-stone-900">ResumeVault</span>
-          <span>© 2024 · AI-powered career toolkit</span>
+          <a href="https://resumevault.app" className="font-black text-stone-900 hover:text-orange-700 transition-colors">ResumeVault</a>
+          <span>© 2025 · AI-powered career toolkit</span>
         </div>
       </footer>
     </main>

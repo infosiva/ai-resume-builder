@@ -37,6 +37,8 @@ interface Props {
   analysis: Analysis | null;
   coverLetter: string | null;
   interviewPrep: InterviewPrep | null;
+  activeTab: 'resume' | 'cover' | 'prep';
+  onTabChange: (tab: 'resume' | 'cover' | 'prep') => void;
 }
 
 function MatchGauge({ score }: { score: number }) {
@@ -168,9 +170,8 @@ function InterviewPrepPanel({ prep }: { prep: InterviewPrep }) {
   );
 }
 
-export default function ResumePreview({ resume, loading, analysis, coverLetter, interviewPrep }: Props) {
+export default function ResumePreview({ resume, loading, analysis, coverLetter, interviewPrep, activeTab, onTabChange }: Props) {
   const [downloadOpen, setDownloadOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'resume' | 'cover' | 'prep'>('resume');
 
   function downloadAs(format: 'md' | 'html' | 'txt') {
     if (!resume) return;
@@ -303,7 +304,7 @@ h1{color:#111}h2{color:#333;border-bottom:1px solid #ddd}li{margin:0.2rem 0}
         {/* Tabs */}
         <div className="flex border-b border-white/8 px-2 pt-2">
           {tabs.map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+            <button key={tab.id} onClick={() => onTabChange(tab.id)}
               className={`relative px-4 py-2.5 text-sm font-medium rounded-t-lg transition-all flex items-center gap-1.5 ${
                 activeTab === tab.id
                   ? 'text-white bg-white/[0.06] border-b-2 border-violet-400'
@@ -357,7 +358,8 @@ h1{color:#111}h2{color:#333;border-bottom:1px solid #ddd}li{margin:0.2rem 0}
                     <p className="text-xs text-white/25">Matching keywords · ATS optimising · Highlighting your best experience</p>
                   </div>
                 ) : resume ? (
-                  <pre className="text-sm text-white/80 whitespace-pre-wrap font-mono leading-relaxed">{resume}</pre>
+                  <div className="text-sm text-white/80 leading-relaxed prose prose-invert max-w-none"
+                    dangerouslySetInnerHTML={{ __html: mdToHtml(resume) }} />
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full gap-3 text-center">
                     <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center text-3xl">✦</div>
