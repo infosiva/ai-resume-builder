@@ -8,7 +8,7 @@
 
 export const theme = {
   // ── Identity ─────────────────────────────────────────────
-  name:    'ResumeAI',
+  name:    'ResumeVault',
   tagline: 'Paste a job spec. Get hired.',
   sub:     'AI-powered resume, cover letter & interview prep — in 60 seconds',
 
@@ -74,7 +74,7 @@ export const theme = {
   ],
 
   // ── SEO ───────────────────────────────────────────────────
-  metaTitle:       'ResumeAI — AI Resume Builder & Job Match',
+  metaTitle:       'ResumeVault — AI Resume Builder & Job Match',
   metaDescription: 'Paste a job description. AI scores your match, finds keyword gaps, and crafts a tailored resume, cover letter & interview prep in 60 seconds.',
 }
 

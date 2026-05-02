@@ -40,7 +40,7 @@ export default function Home() {
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-3 sans">
               <div className="w-7 h-7 rounded bg-orange-700 flex items-center justify-center text-white text-xs font-black">R</div>
-              <span className="font-black text-lg tracking-tight text-stone-900">ResumeAI</span>
+              <span className="font-black text-lg tracking-tight text-stone-900">ResumeVault</span>
               <span className="hidden sm:block text-xs text-stone-400 border-l border-stone-200 pl-3 ml-1">AI-powered career toolkit</span>
             </div>
             <div className="flex items-center gap-6 sans">
@@ -163,7 +163,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t-2 border-stone-900 bg-white sans">
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between text-xs text-stone-400">
-          <span className="font-black text-stone-900">ResumeAI</span>
+          <span className="font-black text-stone-900">ResumeVault</span>
           <span>© 2024 · AI-powered career toolkit</span>
         </div>
       </footer>
