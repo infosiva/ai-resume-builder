@@ -59,16 +59,16 @@ export default function Home() {
 
       {/* Hero — editorial magazine style */}
       <section className="border-b border-stone-200 bg-white">
-        <div className="max-w-7xl mx-auto px-6 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-24">
           <div className="max-w-4xl">
             <div className="sans inline-flex items-center gap-2 text-xs font-bold text-orange-700 uppercase tracking-widest mb-6 border-l-4 border-orange-600 pl-3">
               Powered by Claude AI · ATS-Optimised
             </div>
-            <h1 className="text-5xl md:text-7xl font-black text-stone-900 leading-[0.95] tracking-tight mb-6" style={{ fontFamily: 'Georgia, serif' }}>
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-stone-900 leading-[0.95] tracking-tight mb-6" style={{ fontFamily: 'Georgia, serif' }}>
               Land the job<br />
               <span className="text-orange-700">you deserve.</span>
             </h1>
-            <p className="sans text-xl text-stone-500 max-w-2xl leading-relaxed mb-8">
+            <p className="sans text-base sm:text-xl text-stone-500 max-w-2xl leading-relaxed mb-8">
               Paste a job description. AI scores your match, finds keyword gaps, and crafts a tailored resume, cover letter, and interview prep — in under 60 seconds.
             </p>
             <div className="sans flex flex-wrap gap-2">
@@ -86,8 +86,8 @@ export default function Home() {
       </section>
 
       {/* Step guide strip */}
-      <section className="bg-stone-900 text-white sans">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-0 overflow-x-auto">
+      <section className="bg-stone-900 text-white sans hidden sm:block">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-0">
           {[
             { n: "01", label: "Paste job spec" },
             { n: "02", label: "Check match score" },
@@ -107,7 +107,7 @@ export default function Home() {
       </section>
 
       {/* Main builder */}
-      <section id="how" className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <section id="how" className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
         {/* Override ResumeForm dark styles with light overrides */}
         <div className="[&_h2]:text-stone-900 [&_h2]:sans [&_p]:text-stone-500 [&_p]:sans [&_label]:text-stone-500 [&_label]:sans [&_textarea]:bg-white [&_textarea]:border-stone-200 [&_textarea]:text-stone-900 [&_textarea]:placeholder-stone-300 [&_textarea]:focus:border-orange-500 [&_input]:bg-white [&_input]:border-stone-200 [&_input]:text-stone-900 [&_input]:placeholder-stone-300 [&_input]:focus:border-orange-500 [&_.rounded-2xl]:bg-white [&_.rounded-2xl]:border-stone-200 [&_.rounded-2xl]:shadow-sm">
           <ResumeForm

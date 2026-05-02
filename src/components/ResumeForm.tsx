@@ -135,13 +135,13 @@ export default function ResumeForm({ onGenerate, setLoading, onAnalysis, onCover
   const hasInput = !!jobDesc && !!experience;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-8">
+    <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8">
       <h2 className="text-xl font-semibold mb-1">Build your resume</h2>
       <p className="text-sm text-white/40 mb-6">Paste a job spec · AI analyses the match · Get a tailored resume, cover letter & interview prep</p>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Name + Title row */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="text-xs font-medium text-white/50 uppercase tracking-wider mb-2 block">Your name</label>
             <input value={name} onChange={e => setName(e.target.value)} placeholder="Jane Smith" className={inputClass} />
