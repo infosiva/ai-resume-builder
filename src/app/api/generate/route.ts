@@ -1,19 +1,13 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
+import { callAI } from "@/lib/ai";
 
 export async function POST(req: NextRequest) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json({ error: 'API not configured. Please set ANTHROPIC_API_KEY.' }, { status: 500 })
-  }
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
   const { jobDesc, experience, skills, name, currentTitle, mode } = await req.json();
 
   if (mode === "analyze") {
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1500,
-      system: "You are a professional recruiter and ATS expert. Return ONLY valid JSON, no markdown.",
-      messages: [{
+    const { text } = await callAI(
+      "You are a professional recruiter and ATS expert. Return ONLY valid JSON, no markdown.",
+      [{
         role: "user",
         content: `Analyze this job description and candidate profile.
 
@@ -41,21 +35,20 @@ Return this JSON:
   "job_search_terms": "React Developer remote"
 }`,
       }],
-    });
-    const text = message.content[0].type === "text" ? message.content[0].text : "{}";
+      1500,
+      'balanced',
+    )
     try {
-      const match = text.match(/\{[\s\S]*\}/);
-      return NextResponse.json({ analysis: match ? JSON.parse(match[0]) : {} });
+      const match = text.match(/\{[\s\S]*\}/)
+      return NextResponse.json({ analysis: match ? JSON.parse(match[0]) : {} })
     } catch {
-      return NextResponse.json({ analysis: {} });
+      return NextResponse.json({ analysis: {} })
     }
   }
 
   if (mode === "cover_letter") {
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 1200,
-      system: `You are an expert career coach and professional writer. Write compelling, personalised cover letters.
+    const { text } = await callAI(
+      `You are an expert career coach and professional writer. Write compelling, personalised cover letters.
 Rules:
 - 3-4 paragraphs, conversational yet professional
 - Opening: grab attention — reference something specific about the role/company
@@ -64,7 +57,7 @@ Rules:
 - Do NOT use generic phrases like "I am writing to apply" or "Please find enclosed"
 - Mirror the language/tone of the job description
 - Keep under 350 words`,
-      messages: [{
+      [{
         role: "user",
         content: `Write a tailored cover letter for:
 
@@ -82,17 +75,16 @@ ${skills}
 
 Write a concise, powerful cover letter that shows genuine fit for this specific role.`,
       }],
-    });
-    const coverLetter = message.content[0].type === "text" ? message.content[0].text : "";
-    return NextResponse.json({ coverLetter });
+      1200,
+      'best',
+    )
+    return NextResponse.json({ coverLetter: text })
   }
 
   if (mode === "interview_prep") {
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-6",
-      max_tokens: 2000,
-      system: "You are an expert interview coach. Return ONLY valid JSON, no markdown.",
-      messages: [{
+    const { text } = await callAI(
+      "You are an expert interview coach. Return ONLY valid JSON, no markdown.",
+      [{
         role: "user",
         content: `Based on this job description and candidate profile, generate interview prep materials.
 
@@ -124,21 +116,20 @@ Return this JSON:
 
 Generate 8 questions covering: 2 technical, 3 behavioural, 2 situational, 1 culture fit. Make them specific to this exact role.`,
       }],
-    });
-    const text = message.content[0].type === "text" ? message.content[0].text : "{}";
+      2000,
+      'best',
+    )
     try {
-      const match = text.match(/\{[\s\S]*\}/);
-      return NextResponse.json({ prep: match ? JSON.parse(match[0]) : {} });
+      const match = text.match(/\{[\s\S]*\}/)
+      return NextResponse.json({ prep: match ? JSON.parse(match[0]) : {} })
     } catch {
-      return NextResponse.json({ prep: {} });
+      return NextResponse.json({ prep: {} })
     }
   }
 
   // Generate tailored resume
-  const message = await client.messages.create({
-    model: "claude-sonnet-4-6",
-    max_tokens: 3000,
-    system: `You are an expert resume writer and career coach. Create a professional, ATS-optimized resume.
+  const { text } = await callAI(
+    `You are an expert resume writer and career coach. Create a professional, ATS-optimized resume.
 Rules:
 - Use the EXACT keywords from the job description (ATS requires this)
 - Start bullet points with strong action verbs (Led, Built, Drove, Increased, Reduced)
@@ -147,7 +138,7 @@ Rules:
 - Format in clean markdown with clear sections
 - Highlight skills that directly match job requirements
 - Keep it concise: 1 page ideally, 2 pages max`,
-    messages: [{
+    [{
       role: "user",
       content: `Create a tailored resume for this specific role.
 
@@ -170,8 +161,8 @@ Generate a complete, tailored resume that:
 4. Includes a strong summary tailored to this specific job
 5. Lists skills in order of relevance to the job description`,
     }],
-  });
-
-  const resume = message.content[0].type === "text" ? message.content[0].text : "";
-  return NextResponse.json({ resume });
+    3000,
+    'best',
+  )
+  return NextResponse.json({ resume: text })
 }
