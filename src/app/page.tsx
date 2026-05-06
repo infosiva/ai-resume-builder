@@ -46,60 +46,57 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen relative z-10">
-      {/* Nav — editorial masthead style */}
-      <nav className="border-b-2 border-stone-900 bg-white sticky top-0 z-50">
+    <main className="min-h-screen relative z-10" style={{ background: '#0a0a0f', color: '#fff' }}>
+      {/* Nav — Premium Dark Recruitment */}
+      <nav className="border-b border-white/5 sticky top-0 z-50 backdrop-blur-xl" style={{ background: 'rgba(10,10,15,0.92)' }}>
         <div className="max-w-7xl mx-auto px-6 py-0">
           <div className="flex items-center justify-between h-14">
-            <div className="flex items-center gap-3 sans">
-              <div className="w-7 h-7 rounded bg-orange-700 flex items-center justify-center text-white text-xs font-black">R</div>
-              <span className="font-black text-lg tracking-tight text-stone-900">ResumeVault</span>
-              <span className="hidden sm:block text-xs text-stone-400 border-l border-stone-200 pl-3 ml-1">AI-powered career toolkit</span>
+            <div className="flex items-center gap-3">
+              <span className="text-xl">💼</span>
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-lg tracking-tight text-white">ResumeVault</span>
+                <span className="hidden sm:block text-xs text-white/40 border-l border-white/10 pl-3 ml-1">AI Career Toolkit</span>
+              </div>
             </div>
-            <div className="flex items-center gap-6 sans">
-              <a href="#how" className="text-sm text-stone-500 hover:text-stone-900 transition-colors hidden sm:block">How it works</a>
-              <a href="#pricing" className="text-sm text-stone-500 hover:text-stone-900 transition-colors hidden sm:block">Pricing</a>
-              <a href="#how" className="text-sm px-4 py-2 bg-stone-900 text-white hover:bg-orange-700 transition-all font-semibold rounded">
-                Try free →
+            <div className="flex items-center gap-6">
+              <a href="#how" className="text-sm text-white/60 hover:text-white transition-colors hidden sm:block">How it works</a>
+              <a href="#pricing" className="text-sm text-white/60 hover:text-white transition-colors hidden sm:block">Pricing</a>
+              <a href="#how" className="text-sm px-4 py-2 font-semibold rounded-lg transition-all" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#0a0a0f' }}>
+                Build Free Resume
               </a>
             </div>
           </div>
         </div>
-        {/* Thin orange accent line */}
-        <div className="h-0.5 bg-orange-600" />
       </nav>
 
-      {/* Hero — editorial magazine style */}
-      <section className="border-b border-stone-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-24">
+      {/* Hero — Premium Dark */}
+      <section className="border-b border-white/5" style={{ background: '#0a0a0f' }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 md:py-24">
           <div className="max-w-4xl">
-            <div className="sans inline-flex items-center gap-2 text-xs font-bold text-orange-700 uppercase tracking-widest mb-6 border-l-4 border-orange-600 pl-3">
-              Powered by Claude AI · ATS-Optimised
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full border mb-7" style={{ borderColor: '#f59e0b', color: '#f59e0b', background: 'rgba(245,158,11,0.08)' }}>
+              ✦ Powered by Claude AI · ATS-Optimised
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-black text-stone-900 leading-[0.95] tracking-tight mb-6" style={{ fontFamily: 'Georgia, serif' }}>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-[0.95] mb-6">
               Land the job<br />
-              <span className="text-orange-700">you deserve.</span>
+              <span style={{ textDecoration: 'underline', textDecorationColor: '#f59e0b', textDecorationThickness: '3px' }}>you deserve.</span>
             </h1>
-            <p className="sans text-base sm:text-xl text-stone-500 max-w-2xl leading-relaxed mb-8">
+            <p className="text-base sm:text-xl text-white/60 max-w-2xl leading-relaxed mb-8">
               Paste a job description. AI scores your match, finds keyword gaps, and crafts a tailored resume, cover letter, and interview prep — in under 60 seconds.
             </p>
-            <div className="sans flex flex-wrap gap-2">
-              {["✓ ATS keyword analysis", "✓ Match score", "✓ Cover letter", "✓ Interview prep", "✓ Salary hints"].map(f => (
-                <span key={f} className="text-sm text-stone-600 bg-stone-100 px-3 py-1.5 rounded-full border border-stone-200">{f}</span>
+            {/* Trust pills */}
+            <div className="flex flex-wrap gap-2">
+              {["ATS Analysis", "Match Score", "Cover Letter", "Interview Prep"].map(f => (
+                <span key={f} className="text-xs font-medium px-3 py-1.5 rounded-full border" style={{ borderColor: 'rgba(245,158,11,0.4)', color: '#f59e0b', background: 'rgba(245,158,11,0.06)' }}>{f}</span>
               ))}
             </div>
           </div>
         </div>
-        {/* Decorative rule + issue line */}
-        <div className="max-w-7xl mx-auto px-6 pb-4 sans flex items-center justify-between text-xs text-stone-400 border-t border-stone-100 pt-3">
-          <span>Est. 2024 · The smarter way to job hunt</span>
-          <span>AI-assisted · Always free to start</span>
-        </div>
       </section>
 
       {/* Step guide strip */}
-      <section className="bg-stone-900 text-white sans hidden sm:block">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-0">
+      <section className="hidden sm:block border-b border-white/5" style={{ background: 'rgba(245,158,11,0.04)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-0">
           {[
             { n: "01", label: "Paste job spec" },
             { n: "02", label: "Check match score" },
@@ -109,10 +106,10 @@ export default function Home() {
           ].map((s, i, arr) => (
             <div key={s.n} className="flex items-center flex-shrink-0">
               <div className="flex items-center gap-2 px-4 py-1">
-                <span className="text-orange-500 font-black text-xs">{s.n}</span>
-                <span className="text-xs text-stone-300 whitespace-nowrap">{s.label}</span>
+                <span className="font-black text-xs" style={{ color: '#f59e0b' }}>{s.n}</span>
+                <span className="text-xs text-white/40 whitespace-nowrap">{s.label}</span>
               </div>
-              {i < arr.length - 1 && <span className="text-stone-600 text-xs">→</span>}
+              {i < arr.length - 1 && <span className="text-white/15 text-xs">→</span>}
             </div>
           ))}
         </div>
@@ -120,8 +117,7 @@ export default function Home() {
 
       {/* Main builder */}
       <section id="how" className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-        {/* Override ResumeForm dark styles with light overrides */}
-        <div className="[&_h2]:text-stone-900 [&_h2]:sans [&_p]:text-stone-500 [&_p]:sans [&_label]:text-stone-500 [&_label]:sans [&_textarea]:bg-white [&_textarea]:border-stone-200 [&_textarea]:text-stone-900 [&_textarea]:placeholder-stone-300 [&_textarea]:focus:border-orange-500 [&_input]:bg-white [&_input]:border-stone-200 [&_input]:text-stone-900 [&_input]:placeholder-stone-300 [&_input]:focus:border-orange-500 [&_.rounded-2xl]:bg-white [&_.rounded-2xl]:border-stone-200 [&_.rounded-2xl]:shadow-sm">
+        <div className="[&_h2]:text-white [&_p]:text-white/60 [&_label]:text-white/50 [&_textarea]:bg-white/5 [&_textarea]:border-white/10 [&_textarea]:text-white [&_textarea]:placeholder-white/25 [&_input]:bg-white/5 [&_input]:border-white/10 [&_input]:text-white [&_input]:placeholder-white/25 [&_.rounded-2xl]:bg-white/5 [&_.rounded-2xl]:border-white/10">
           <ResumeForm
             onGenerate={(r) => { setResume(r); setActivePreviewTab('resume'); }}
             setLoading={setLoading}
@@ -131,7 +127,7 @@ export default function Home() {
             initialValues={savedSession}
           />
         </div>
-        <div className="[&_h2]:text-stone-900 [&_h2]:sans [&_p]:text-stone-500">
+        <div className="[&_h2]:text-white [&_p]:text-white/60">
           <ResumePreview
             resume={resume}
             loading={loading}
@@ -144,30 +140,30 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pricing — editorial table style */}
-      <section id="pricing" className="border-t border-stone-200 bg-stone-50">
+      {/* Pricing */}
+      <section id="pricing" className="border-t border-white/5">
         <div className="max-w-4xl mx-auto px-6 py-20">
-          <div className="sans text-center mb-12">
-            <div className="text-xs font-bold text-orange-700 uppercase tracking-widest mb-3">Pricing</div>
-            <h2 className="text-4xl font-black text-stone-900" style={{ fontFamily: 'Georgia, serif' }}>Simple, honest pricing</h2>
+          <div className="text-center mb-12">
+            <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: '#f59e0b' }}>Pricing</div>
+            <h2 className="text-4xl font-bold text-white tracking-tight">Simple, honest pricing</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border border-stone-200 rounded-lg overflow-hidden sans">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px rounded-xl overflow-hidden border border-white/10">
             {[
               { name: "Free", price: "$0", sub: "Always free", features: ["3 resumes / month", "Job match score", "ATS keyword analysis", "Cover letter generator", "Interview prep (3 questions)", "All export formats"], cta: "Get started free", highlight: false },
               { name: "Pro", price: "$15", sub: "per month", features: ["Unlimited resumes & cover letters", "Full interview prep (8 questions)", "Salary range insight", "ATS score checker", "Job alerts by email", "Priority support"], cta: "Start free trial", highlight: true },
             ].map((plan) => (
-              <div key={plan.name} className={`p-8 ${plan.highlight ? "bg-stone-900 text-white" : "bg-white"}`}>
-                <div className={`text-xs font-bold uppercase tracking-widest mb-1 ${plan.highlight ? 'text-orange-400' : 'text-stone-400'}`}>{plan.name}</div>
-                <div className={`text-5xl font-black mb-0.5 ${plan.highlight ? 'text-white' : 'text-stone-900'}`} style={{ fontFamily: 'Georgia, serif' }}>{plan.price}</div>
-                <div className={`text-sm mb-6 ${plan.highlight ? 'text-stone-400' : 'text-stone-500'}`}>{plan.sub}</div>
+              <div key={plan.name} className="p-8" style={{ background: plan.highlight ? 'rgba(245,158,11,0.07)' : 'rgba(255,255,255,0.03)' }}>
+                <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: plan.highlight ? '#f59e0b' : 'rgba(255,255,255,0.3)' }}>{plan.name}</div>
+                <div className="text-5xl font-bold text-white mb-0.5">{plan.price}</div>
+                <div className="text-sm mb-6 text-white/40">{plan.sub}</div>
                 <ul className="space-y-2.5 mb-8">
                   {plan.features.map((f) => (
-                    <li key={f} className={`flex items-start gap-2 text-sm ${plan.highlight ? 'text-stone-300' : 'text-stone-600'}`}>
-                      <span className={plan.highlight ? 'text-orange-400 mt-0.5' : 'text-orange-600 mt-0.5'}>✓</span> {f}
+                    <li key={f} className="flex items-start gap-2 text-sm text-white/60">
+                      <span className="mt-0.5" style={{ color: '#f59e0b' }}>✓</span> {f}
                     </li>
                   ))}
                 </ul>
-                <button className={`w-full py-3 font-bold text-sm transition-all rounded ${plan.highlight ? "bg-orange-600 text-white hover:bg-orange-500" : "bg-stone-900 text-white hover:bg-stone-800"}`}>
+                <button className="w-full py-3 font-semibold text-sm transition-all rounded-lg" style={plan.highlight ? { background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: '#0a0a0f' } : { border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.7)', background: 'transparent' }}>
                   {plan.cta}
                 </button>
               </div>
@@ -177,9 +173,9 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t-2 border-stone-900 bg-white sans">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between text-xs text-stone-400">
-          <a href="https://resumevault.app" className="font-black text-stone-900 hover:text-orange-700 transition-colors">ResumeVault</a>
+      <footer className="border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between text-xs text-white/30">
+          <a href="https://resumevault.app" className="font-bold text-white/70 hover:text-amber-400 transition-colors">ResumeVault</a>
           <span>© 2025 · AI-powered career toolkit</span>
         </div>
       </footer>
