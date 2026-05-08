@@ -1,29 +1,9 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useGate } from "@/lib/shared/useGate";
+import RegisterGate from "@/lib/shared/RegisterGate";
 
 const SESSION_KEY = "resumevault-session";
-
-function useRateLimit(key: string, limit: number) {
-  const getUsage = useCallback(() => {
-    if (typeof window === "undefined") return { count: 0, date: "" };
-    try {
-      return JSON.parse(localStorage.getItem(key) || '{"count":0,"date":""}');
-    } catch {
-      return { count: 0, date: "" };
-    }
-  }, [key]);
-  const today = new Date().toISOString().split("T")[0];
-  const usage = getUsage();
-  const count = usage.date === today ? usage.count : 0;
-  const remaining = Math.max(0, limit - count);
-  const increment = useCallback(() => {
-    const d = new Date().toISOString().split("T")[0];
-    const u = getUsage();
-    const c = u.date === d ? u.count + 1 : 1;
-    localStorage.setItem(key, JSON.stringify({ count: c, date: d }));
-  }, [key, getUsage]);
-  return { remaining, increment, isLimited: remaining === 0 };
-}
 
 interface Analysis {
   role_title?: string;
@@ -77,7 +57,9 @@ export default function ResumeForm({
   onInterviewPrep,
   initialValues,
 }: Props) {
-  const { remaining, increment, isLimited } = useRateLimit("resumeai-usage", 3);
+  const { count: gateCount, showGate, increment: gateIncrement, onRegistered, dismissGate, isRegistered } = useGate("resumevault", 3);
+  const remaining = Math.max(0, 3 - gateCount);
+  const isLimited = !isRegistered && gateCount >= 3;
   const [jobDesc, setJobDesc] = useState(initialValues?.jobDesc ?? "");
   const [experience, setExperience] = useState(initialValues?.experience ?? "");
   const [skills, setSkills] = useState(initialValues?.skills ?? "");
@@ -99,8 +81,9 @@ export default function ResumeForm({
   }, [jobDesc, experience, skills, name, currentTitle]);
 
   async function handleAnalyze() {
-    if (!jobDesc || !experience || isLimited) return;
-    increment();
+    if (!jobDesc || !experience) return;
+    const allowed = await gateIncrement();
+    if (!allowed) return;
     setAnalyzing(true);
     setApiError(null);
     try {
@@ -172,12 +155,13 @@ export default function ResumeForm({
 
   // Generate All: analyze → resume → cover letter → interview prep sequentially
   async function handleGenerateAll() {
-    if (!jobDesc || !experience || isLimited) return;
+    if (!jobDesc || !experience) return;
+    const allowed = await gateIncrement();
+    if (!allowed) return;
     setGeneratingAll(true);
     setApiError(null);
     try {
       // 1. Analyze
-      increment();
       const aRes = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -315,36 +299,25 @@ export default function ResumeForm({
 
         {/* Generate All — primary CTA */}
         <div className="pt-1">
-          {isLimited ? (
-            <div className="w-full py-3 rounded-xl border border-orange-500/30 bg-orange-500/10 text-center">
-              <p className="text-orange-300 text-sm font-semibold">Daily limit reached (3 free / day)</p>
-              <a href="#pricing" className="text-xs text-orange-500/70 hover:text-orange-400 underline">
-                Upgrade to Pro for unlimited →
-              </a>
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={handleGenerateAll}
-              disabled={!hasInput || isAnyLoading}
-              className="w-full py-4 rounded-xl bg-gradient-to-r from-orange-600 to-rose-600 hover:from-orange-500 hover:to-rose-500 font-bold text-base transition-all shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 disabled:opacity-40"
-            >
-              {generatingAll ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Generating everything...
-                </>
-              ) : (
-                <>✦ Generate Full Career Toolkit</>
-              )}
-            </button>
-          )}
-          {!isLimited && (
-            <div className="flex justify-between text-[10px] text-white/25 mt-1.5 px-1">
-              <span>Runs all 4 steps at once: match score + resume + cover letter + interview prep</span>
-              <span>{remaining} left today</span>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={handleGenerateAll}
+            disabled={!hasInput || isAnyLoading}
+            className="w-full py-4 rounded-xl bg-gradient-to-r from-orange-600 to-rose-600 hover:from-orange-500 hover:to-rose-500 font-bold text-base transition-all shadow-lg shadow-orange-500/20 flex items-center justify-center gap-2 disabled:opacity-40"
+          >
+            {generatingAll ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Generating everything...
+              </>
+            ) : (
+              <>✦ Generate Full Career Toolkit</>
+            )}
+          </button>
+          <div className="flex justify-between text-[10px] text-white/25 mt-1.5 px-1">
+            <span>Runs all 4 steps at once: match score + resume + cover letter + interview prep</span>
+            <span>{remaining} free left</span>
+          </div>
         </div>
 
         {/* Individual steps */}
@@ -354,7 +327,7 @@ export default function ResumeForm({
             <button
               type="button"
               onClick={handleAnalyze}
-              disabled={!hasInput || analyzing || isLimited}
+              disabled={!hasInput || analyzing}
               className="py-2.5 rounded-xl border border-violet-500/40 bg-violet-500/10 hover:bg-violet-500/20 text-violet-300 font-medium text-xs transition-all disabled:opacity-40 flex items-center justify-center gap-1.5"
             >
               {analyzing ? (
@@ -408,6 +381,19 @@ export default function ResumeForm({
         <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
           <p className="text-red-300 text-sm">⚠️ {apiError}</p>
         </div>
+      )}
+
+      {showGate && (
+        <RegisterGate
+          freeUsed={gateCount}
+          freeLimit={3}
+          freeFeature="resumes"
+          lockedFeature="unlimited resume generations"
+          accentColor="#f97316"
+          site="resumevault"
+          onSuccess={onRegistered}
+          onDismiss={dismissGate}
+        />
       )}
     </div>
   );
