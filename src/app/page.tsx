@@ -2,6 +2,14 @@
 import { useState, useEffect, useRef } from "react";
 import ResumeForm from "@/components/ResumeForm";
 import ResumePreview from "@/components/ResumePreview";
+import GuidedTour, { type TourStep } from "@/components/GuidedTour";
+
+const RESUME_TOUR: TourStep[] = [
+  { target: '#hero-cta', title: 'Build your resume free', icon: '📄', body: 'Fill in your details — AI writes polished bullet points, action verbs, and summaries for you.', placement: 'bottom' },
+  { target: '#proof', title: 'Real results', icon: '📈', body: 'Join 50,000+ job seekers who landed interviews with AI-written resumes.', placement: 'top' },
+  { target: '#how', title: 'How it works', icon: '🔧', body: '3 simple steps: paste your info, AI rewrites it professionally, download as PDF.', placement: 'top' },
+  { target: '#pricing', title: 'Unlock all templates', icon: '✨', body: 'Pro unlocks 20+ ATS-optimised templates and unlimited downloads.', placement: 'top' },
+]
 
 const SESSION_KEY = "resumevault-session";
 const PRO_KEY = "resumevault-pro";
@@ -289,6 +297,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-3 pt-2">
               <a
                 href="#how"
+                id="hero-cta"
                 className="px-6 py-3 text-sm font-bold rounded-lg transition-all"
                 style={{ background: '#1e3a5f', color: '#fff', boxShadow: '0 4px 16px rgba(30,58,95,0.25)' }}
               >
@@ -574,6 +583,7 @@ export default function Home() {
           <span>© 2025 · AI-powered career toolkit · resumevault.app</span>
         </div>
       </footer>
+      <GuidedTour steps={RESUME_TOUR} storageKey="resumevault_tour_v1" accentColor="#1e3a5f" />
     </main>
   );
 }
