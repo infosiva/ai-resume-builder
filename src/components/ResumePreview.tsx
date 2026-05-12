@@ -389,12 +389,11 @@ h1{color:#111}h2{color:#333;border-bottom:1px solid #ddd}li{margin:0.2rem 0}
   @media print{body{margin:0.5cm}}
 </style></head><body>${mdToHtml(resume)}</body></html>`;
     const win = window.open("", "_blank");
-    if (!win) return;
+    if (!win) { alert("Allow pop-ups in your browser to download the PDF."); return; }
     win.document.write(html);
     win.document.close();
-    setTimeout(() => {
-      win.print();
-    }, 300);
+    // Use onload to avoid popup-blocker timing issues with setTimeout
+    win.onload = () => win.print();
     setDownloadOpen(false);
   }
 

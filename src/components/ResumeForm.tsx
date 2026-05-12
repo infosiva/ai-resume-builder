@@ -207,25 +207,25 @@ export default function ResumeForm({
   }
 
   const fieldClass =
-    "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-orange-500/60 focus:bg-white/[0.06] transition-all resize-none";
+    "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200 transition-all resize-none";
   const inputClass =
-    "w-full bg-white/[0.04] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/30 focus:outline-none focus:border-orange-500/60 transition-all";
+    "w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-200 transition-all";
 
   const hasInput = !!jobDesc && !!experience;
   const isAnyLoading = analyzing || generatingCL || generatingPrep || generatingAll;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl p-5 sm:p-8">
+    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-5 sm:p-8">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="text-xl font-semibold">Build your career toolkit</h2>
+        <h2 className="text-xl font-semibold text-gray-900">Build your career toolkit</h2>
         {savedAt && (
-          <span className="text-[10px] text-white/30 flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
+          <span className="text-[10px] text-gray-400 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
             Auto-saved {savedAt}
           </span>
         )}
       </div>
-      <p className="text-sm text-white/40 mb-6">
+      <p className="text-sm text-gray-500 mb-6">
         Paste a job spec · AI scores your match · Get resume, cover letter &amp; interview prep
       </p>
 
@@ -233,7 +233,7 @@ export default function ResumeForm({
         {/* Name + Title */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label className="text-xs font-medium text-white/50 uppercase tracking-wider mb-2 block">
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 block">
               Your name
             </label>
             <input
@@ -244,7 +244,7 @@ export default function ResumeForm({
             />
           </div>
           <div>
-            <label className="text-xs font-medium text-white/50 uppercase tracking-wider mb-2 block">
+            <label className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 block">
               Current title
             </label>
             <input
@@ -264,7 +264,7 @@ export default function ResumeForm({
             value={jobDesc}
             onChange={(e) => setJobDesc(e.target.value)}
             placeholder="Paste the full job description here — AI will extract keywords, required skills, and score your match..."
-            rows={6}
+            rows={4}
             className={fieldClass}
             required
           />
@@ -314,15 +314,15 @@ export default function ResumeForm({
               <>✦ Generate Full Career Toolkit</>
             )}
           </button>
-          <div className="flex justify-between text-[10px] text-white/25 mt-1.5 px-1">
+          <div className="flex justify-between text-[10px] text-gray-400 mt-1.5 px-1">
             <span>Runs all 4 steps at once: match score + resume + cover letter + interview prep</span>
             <span>{remaining} free left</span>
           </div>
         </div>
 
         {/* Individual steps */}
-        <div className="border-t border-white/5 pt-4">
-          <div className="text-[10px] text-white/30 uppercase tracking-wider mb-3">Or generate individually</div>
+        <div className="border-t border-gray-100 pt-4">
+          <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-3">Or generate individually</div>
           <div className="grid grid-cols-2 gap-2.5">
             <button
               type="button"
