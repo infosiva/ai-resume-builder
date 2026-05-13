@@ -298,6 +298,17 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Trust bar */}
+            <div className="flex flex-wrap items-center gap-3 text-xs mb-1" style={{ color: '#9ca3af' }}>
+              <span className="flex items-center gap-1"><span className="text-yellow-400">★★★★★</span> 4.8/5</span>
+              <span>·</span>
+              <span>3,100+ resumes built</span>
+              <span>·</span>
+              <span>ATS optimised</span>
+              <span>·</span>
+              <a href="/pricing" className="underline underline-offset-2 transition hover:opacity-80" style={{ color: '#1e3a5f' }}>See pricing</a>
+            </div>
+
             <div className="flex flex-wrap gap-3 pt-2">
               <a
                 href="#how"
