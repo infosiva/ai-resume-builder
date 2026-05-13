@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import NewsletterFormLight from '@/components/NewsletterFormLight'
 
 export const metadata: Metadata = {
   title: 'Pricing — ResumeVault | AI Resume Builder',
@@ -160,6 +161,13 @@ export default function PricingPage() {
           <Link href="/" className="inline-flex items-center gap-2 px-8 py-4 rounded-xl font-bold bg-gradient-to-r from-[#1e3a5f] to-[#2d5a8e] hover:from-[#2d4f7c] hover:to-[#3a6ea8] transition text-white">
             Build my resume free →
           </Link>
+        </div>
+
+        {/* Newsletter */}
+        <div className="border-t border-gray-200 mt-20 pt-12 text-center">
+          <p className="text-gray-600 text-sm font-medium mb-1">Get job search tips and resume advice</p>
+          <p className="text-gray-400 text-xs mb-6">No spam. Unsubscribe anytime.</p>
+          <NewsletterFormLight />
         </div>
       </div>
     </main>
