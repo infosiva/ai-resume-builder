@@ -37,6 +37,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             { "@type": "WebSite", "name": "ResumeVault", "url": brand.url }
           ]
         })}} />
+      
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+        <style dangerouslySetInnerHTML={{ __html: `
+          :root {
+            --theme-primary: #1e3a8a;
+            --theme-secondary: #3b82f6;
+            --theme-base: #f8fafc;
+            --background: #f8fafc;
+            --surface-1: #ffffff;
+            --surface-2: #f1f5f9;
+            --foreground: #0f172a;
+            --text-2: #475569;
+            --border-default: rgba(30,58,138,0.12);
+            --border-strong: rgba(30,58,138,0.25);
+          }
+          body { font-family: 'Inter', system-ui, sans-serif !important; color: #0f172a !important; background: #f8fafc !important; }
+          h1, h2, h3 { font-family: 'Playfair Display', serif !important; }
+          .glass { background: rgba(248,250,252,0.85) !important; border-color: rgba(30,58,138,0.1) !important; color: #0f172a !important; }
+        ` }} />
       </head>
       <body className="flex flex-col min-h-screen">
         <DesignEffects />
@@ -50,3 +71,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
+// design patch applied below via separate edit
